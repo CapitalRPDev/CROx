@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap");
+
+:root {
+  --accent: #00a7dc;
+  --bg: #181818;
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --border: rgba(255, 255, 255, 0.06);
+}
+
+body {
+  visibility: hidden;
+  user-select: none;
+  white-space: nowrap;
+  margin: 0;
+  overflow: hidden;
+}
+
+p {
+  margin: 0;
+}
+
+#eye {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+
+.target-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s ease;
+}
+
+.eye-hover .target-dot {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 167, 220, 0.9), 0 0 16px rgba(0, 167, 220, 0.5);
+}
+
+/* #eyeSvg {
+  fill: rgba(255, 255, 255, 0.15);
+  transition: fill 0.2s ease, filter 0.2s ease;
+}
+
+.eye-hover #eyeSvg,
+.eye-hover {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(0, 167, 220, 0.8));
+} */
+
+#options-wrapper {
+  position: absolute;
+  top: calc(48.4%);
+  left: calc(50% + 22pt);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.option-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-family: "Nunito", sans-serif;
+  background-color: var(--bg);
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 16px 8px 12px;
+  min-width: 160px;
+  width: fit-content;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.option-container:hover {
+  border-left: 3px solid var(--accent);
+  background-color: rgba(0, 167, 220, 0.12);
+  color: var(--text);
+  box-shadow: 0 0 16px rgba(0, 167, 220, 0.15);
+  padding-left: 14px;
+}
+
+.option-container:hover .option-icon {
+  color: var(--accent);
+}
+
+.option-icon {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 14px;
+  text-align: center;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.option-label {
+  font-weight: 600;
+}
