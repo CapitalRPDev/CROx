@@ -1,0 +1,3 @@
+[submodule "ox_inventory"]
+	path = ox_inventory
+	url = https://github.com/overextended/ox_inventory.git
