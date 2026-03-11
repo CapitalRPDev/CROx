@@ -125,6 +125,20 @@ return {
 		type = "item",
 		image = "headbag.png",
 	},
+	['spraycan'] = {
+		name = 'spraycan',
+		label = 'Spray Can',
+		weight = 200,
+		type = "item",
+		image = "headbag.png",
+	},
+	['wipe'] = {
+		name = 'wipe',
+		label = 'Wipe',
+		weight = 200,
+		type = "item",
+		image = "wipe.png",
+	},
 	['burger'] = {
 		label = 'Burger',
 		weight = 220,
