@@ -39,7 +39,7 @@ const getRarityColor = (rarity: string) => {
     case 'special':
       return 'rgba(255, 255, 255, 0.66)'; // Special (white)
     default:
-      return 'rgba(0, 162, 255, 0.46)'; // Default (common gray)
+      return 'rgba(0, 102, 255, 0.46)'; // Default (common gray)
   }
 };
 
