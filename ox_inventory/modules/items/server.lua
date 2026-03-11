@@ -51,6 +51,8 @@ local Inventory
 CreateThread(function()
 	Inventory = require 'modules.inventory.server'
 
+    if not lib then return end
+
 	if shared.framework == 'esx' then
 		local success, items = pcall(MySQL.query.await, 'SELECT * FROM items')
 
@@ -92,7 +94,7 @@ CreateThread(function()
 					if not ItemList[item.name] then
 						fileSize += 1
 
-						local itemStr = itemFormat:format(item.name, item.label, item.rarity, item.weight, item.stack, item.close, item.description and json.encode(item.description) or 'nil')
+						local itemStr = itemFormat:format(item.name, item.label, item.weight, item.stack, item.close, item.description and json.encode(item.description) or 'nil')
 						-- temporary solution for nil values
 						itemStr = itemStr:gsub('[%s]-[%w]+ = "?nil"?,?', '')
 						file[fileSize] = itemStr
@@ -332,6 +334,8 @@ function Items.UpdateDurability(inv, slot, item, value, ostime)
     }, true)
 end
 
+---@deprecated
+---Use the 'ox_inventory:usedItem' event or the 'usingItem' or 'buyItem' hooks
 local function Item(name, cb)
 	local item = ItemList[name]
 

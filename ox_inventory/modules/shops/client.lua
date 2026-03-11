@@ -1,152 +1,212 @@
 if not lib then return end
 
+local shopTypes = {}
+local shops = {}
 local createBlip = require 'modules.utils.client'.CreateBlip
 
-local rawShopData = lib.load('data.shops')
-local shopDefs = rawShopData and rawShopData.Shops or rawShopData or {}
+for shopType, shopData in pairs(lib.load('data.shops') or {} --[[@as table<string, OxShop>]]) do
+	local shop = {
+		name = shopData.name,
+		groups = shopData.groups or shopData.jobs,
+		blip = shopData.blip,
+		label = shopData.label,
+        icon = shopData.icon
+	}
 
-local ShopZones = {}
-local ShopPrompts = {}
+	if shared.target then
+		shop.model = shopData.model
+		shop.targets = shopData.targets
+	else
+		shop.locations = shopData.locations
+	end
+
+	shopTypes[shopType] = shop
+	local blip = shop.blip
+
+	if blip then
+		blip.name = ('ox_shop_%s'):format(shopType)
+		AddTextEntry(blip.name, shop.name or shopType)
+	end
+end
+
+---@param point CPoint
+local function onEnterShop(point)
+	if not point.entity then
+		local model = lib.requestModel(point.ped)
+
+		if not model then return end
+
+		local entity = CreatePed(0, model, point.coords.x, point.coords.y, point.coords.z, point.heading, false, true)
+
+		if point.scenario then TaskStartScenarioInPlace(entity, point.scenario, 0, true) end
+
+		SetModelAsNoLongerNeeded(model)
+		FreezeEntityPosition(entity, true)
+		SetEntityInvincible(entity, true)
+		SetBlockingOfNonTemporaryEvents(entity, true)
+
+		exports.ox_target:addLocalEntity(entity, {
+            {
+                icon = point.icon or 'fas fa-shopping-basket',
+                label = point.label,
+                groups = point.groups,
+                onSelect = function()
+                    client.openInventory('shop', { id = point.invId, type = point.type })
+                end,
+                iconColor = point.iconColor,
+                distance = point.shopDistance or 2.0
+            }
+		})
+
+		point.entity = entity
+	end
+end
+
+local Utils = require 'modules.utils.client'
+
+local function onExitShop(point)
+	local entity = point.entity
+
+	if not entity then return end
+
+	exports.ox_target:removeLocalEntity(entity)
+	Utils.DeleteEntity(entity)
+
+	point.entity = nil
+end
 
 local function hasShopAccess(shop)
 	return not shop.groups or client.hasGroup(shop.groups)
 end
 
--- Evaluate a shop condition in a safe, flexible way.
--- - nil:     treated as allowed
--- - boolean: true/false directly
--- - function: called; return truthy to allow, falsy to block
-local function passesCondition(condition)
-	if condition == nil then
-		return true
-	end
-
-	if type(condition) == 'boolean' then
-		return condition
-	end
-
-	if type(condition) == 'function' then
-		local ok, result = pcall(condition)
-
-		if not ok then
-			print(('[ox_inventory] shop condition error: %s'):format(result))
-			return false
-		end
-
-		return result and true or false
-	end
-
-	-- Any other type is treated as "no extra restriction"
-	return true
-end
-
 local function wipeShops()
-	for zoneName, zone in pairs(ShopZones) do
-		if type(zone.id) == 'number' then
-			exports.qbx_core:RemoveZoneById(zone.id)
+	for i = 1, #shops do
+		local shop = shops[i]
+
+		if shop.zoneId then
+            exports.ox_target:removeZone(shop.zoneId)
+            shop.zoneId = nil
+		end
+
+		if shop.remove then
+			if shop.entity then onExitShop(shop) end
+
+			shop:remove()
+		end
+
+		if shop.blip then
+			RemoveBlip(shop.blip)
 		end
 	end
 
-	for _, prompt in pairs(ShopPrompts) do
-		exports.qbx_core:HidePromptGroup(prompt)
-	end
-
-	ShopZones = {}
-	ShopPrompts = {}
+	table.wipe(shops)
 end
+
+local markerColour = { 30, 150, 30 }
 
 local function refreshShops()
 	wipeShops()
 
-	for shopType, shopData in pairs(shopDefs ) do
-		local label = shopData.label or shopType
-		local groups = shopData.groups or shopData.jobs
-		local blipInfo = shopData.blipInfo or shopData.blip
-		local condition = shopData.condition
-		if not hasShopAccess({ groups = groups }) then
-			goto skipShop
-		end
+	local id = 0
 
-		
-		if blipInfo and shopData.locations then
-			for _, loc in ipairs(shopData.locations) do
-				local center = loc.center or loc.coords or loc.loc
-				if center then
-					createBlip(blipInfo, center)
+	for type, shop in pairs(shopTypes) do
+		local blip = shop.blip
+		local label = shop.label or locale('open_label', shop.name)
+
+		if shared.target then
+			if shop.model then
+				if not hasShopAccess(shop) then goto skipLoop end
+
+				exports.ox_target:removeModel(shop.model, shop.name)
+				exports.ox_target:addModel(shop.model, {
+                    {
+                        name = shop.name,
+                        icon = shop.icon or 'fas fa-shopping-basket',
+                        label = label,
+                        onSelect = function()
+                            client.openInventory('shop', { type = type })
+                        end,
+                        distance = 2
+                    },
+				})
+			elseif shop.targets then
+				for i = 1, #shop.targets do
+					local target = shop.targets[i]
+					local shopid = ('%s-%s'):format(type, i)
+
+					if target.ped then
+						id += 1
+
+						shops[id] = lib.points.new({
+							coords = target.loc,
+							heading = target.heading,
+							distance = 60,
+							inv = 'shop',
+							invId = i,
+							type = type,
+							blip = blip and hasShopAccess(shop) and createBlip(blip, target.loc),
+							ped = target.ped,
+							scenario = target.scenario,
+							label = label,
+							groups = shop.groups,
+							icon = shop.icon or 'fas fa-shopping-basket',
+							iconColor = target.iconColor,
+							onEnter = onEnterShop,
+							onExit = onExitShop,
+							shopDistance = target.distance,
+						})
+					else
+						if not hasShopAccess(shop) then goto nextShop end
+
+						id += 1
+
+						shops[id] = {
+							zoneId = Utils.CreateBoxZone(target, {
+                                {
+                                    name = shopid,
+                                    icon = shop.icon or 'fas fa-shopping-basket',
+                                    label = label,
+                                    groups = shop.groups,
+                                    onSelect = function()
+                                        client.openInventory('shop', { id = i, type = type })
+                                    end,
+                                    iconColor = target.iconColor,
+                                    distance = target.distance
+                                }
+                            }),
+							blip = blip and createBlip(blip, target.coords)
+						}
+					end
+
+					::nextShop::
 				end
 			end
-		end
+		elseif shop.locations then
+			if not hasShopAccess(shop) then goto skipLoop end
+            local shopPrompt = { icon = 'fas fa-shopping-basket' }
 
-		if not shopData.locations then goto skipShop end
+			for i = 1, #shop.locations do
+				local coords = shop.locations[i]
+				id += 1
 
-		for index, loc in ipairs(shopData.locations) do
-			local center = loc.center or loc.coords or loc.loc
-			if center then
-				local opts = loc.options or {}
-
-				
-				local prompt = exports.qbx_core:CreatePromptGroup({
-					{
-						Id = ('shop-%s-%s'):format(shopType, index),
-						Complete = function()
-							exports.qbx_core:HidePromptGroup(prompt)
-							client.openInventory('shop', { id = index, type = shopType })
-						end,
-						Title = label,
-						Description = '',
-						AutoComplete = true,
-						Icon = 'fa-solid fa-basket-shopping',
-						Text = 'Open Shop'
-					}
+				shops[id] = lib.points.new(coords, 16, {
+					coords = coords,
+					distance = 16,
+					inv = 'shop',
+					invId = i,
+					type = type,
+                    marker = markerColour,
+                    prompt = {
+                        options = shop.icon and { icon = shop.icon } or shopPrompt,
+                        message = ('**%s**  \n%s'):format(label, locale('interact_prompt', GetControlInstructionalButton(0, 38, true):sub(3)))
+                    },
+					nearby = Utils.nearbyMarker,
+					blip = blip and createBlip(blip, coords)
 				})
-
-				ShopPrompts[('shop-%s-%s'):format(shopType, index)] = prompt
-
-				
-				local zoneId
-				
-				
-				local length = loc.length or 2.0
-				local width = loc.width or 2.0
-
-				local zoneName = ('shop-%s-%s'):format(shopType, index)
-
-				zoneId = exports.qbx_core:AddBoxZone(
-					zoneName,
-					center,
-					length,
-					width,
-					{
-						heading = opts.heading or 90.0,
-						minZ = opts.minZ or (center.z - 1.0),
-						maxZ = opts.maxZ or (center.z + 1.0),
-						data = { shopType = shopType, index = index }
-					}
-				)
-
-				ShopZones[zoneName] = { id = zoneId and zoneId.id or nil }
-
-				exports.qbx_core:AddPolyZoneEnterHandler(
-					zoneName,
-					function(data)
-						-- Always create zones. Only control the prompt via access + condition.
-						if not hasShopAccess({ groups = groups }) then return end
-						if not passesCondition(condition) then return end
-
-						exports.qbx_core:ShowPromptGroup(prompt)
-					end
-				)
-
-				exports.qbx_core:AddPolyZoneExitHandler(
-					zoneName,
-					function(data)
-						exports.qbx_core:HidePromptGroup(prompt)
-					end
-				)
 			end
 		end
 
-		::skipShop::
+		::skipLoop::
 	end
 end
 

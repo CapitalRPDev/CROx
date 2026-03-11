@@ -2,3 +2,6 @@ modules/logs/**/
 .cfg
 node_modules
 .idea
+
+#Ignore cursor AI rules
+.cursor\rules\codacy.mdc

@@ -3,52 +3,14 @@ if not lib then return end
 local Items = require 'modules.items.server'
 local Inventory = require 'modules.inventory.server'
 local Shops = {}
+local locations = shared.target and 'targets' or 'locations'
 
-
-local locations = 'locations'
-
-
-
-local rawShopData = lib.load('data.shops')
-local ShopProducts = rawShopData and rawShopData.ShopProducts or {}
-local ShopDefs = rawShopData and rawShopData.Shops or rawShopData or {}
-local ShopsToLog = rawShopData and rawShopData.ShopsToLog or {}
-
-local function buildLocationsAndTargets(shopData)
-	if not shopData.locations then return nil, nil end
-
-	local locs = {}
-	local targets = {}
-
-	for i = 1, #shopData.locations do
-		local loc = shopData.locations[i]
-		local center = loc.center or loc.coords or loc.loc
-		if center then
-			locs[#locs + 1] = center
-
-			local opts = loc.options or {}
-
-			targets[i] = {
-				loc = center,
-				length = loc.length or 1.5,
-				width = loc.width or 1.5,
-				heading = opts.heading or 0.0,
-				minZ = opts.minZ or (center.z - 1.0),
-				maxZ = opts.maxZ or (center.z + 1.0),
-				distance = opts.distance or 2.0,
-			}
-		end
-	end
-
-	return locs, targets
-end
-
-
-
-
+---@class OxShopItem
+---@field slot number
+---@field weight number
 
 local function setupShopItems(id, shopType, shopName, groups)
-	local shop = id and Shops[shopType][id] or Shops[shopType] 
+	local shop = id and Shops[shopType][id] or Shops[shopType] --[[@as OxShop]]
 
 	for i = 1, shop.slots do
 		local slot = shop.items[i]
@@ -61,7 +23,7 @@ local function setupShopItems(id, shopType, shopName, groups)
 		local Item = Items(slot.name)
 
 		if Item then
-			
+			---@type OxShopItem
 			slot = {
 				name = Item.name,
 				slot = i,
@@ -83,8 +45,8 @@ local function setupShopItems(id, shopType, shopName, groups)
 	end
 end
 
-
-
+---@param shopType string
+---@param properties OxShop
 local function registerShopType(shopType, properties)
 	local shopLocations = properties[locations] or properties.locations
 
@@ -104,8 +66,8 @@ local function registerShopType(shopType, properties)
 	end
 end
 
-
-
+---@param shopType string
+---@param id number
 local function createShop(shopType, id)
 	local shop = Shops[shopType]
 
@@ -129,7 +91,6 @@ local function createShop(shopType, id)
         coords = store
     end
 
-	
 	shop[id] = {
 		label = shop.name,
 		id = shopType..' '..id,
@@ -146,39 +107,12 @@ local function createShop(shopType, id)
 	return shop[id]
 end
 
-
-for shopType, shopDetails in pairs(ShopDefs) do
-	local inventory
-
-	if shopDetails.products and ShopProducts[shopDetails.products] then
-		inventory = ShopProducts[shopDetails.products]
-	else
-		inventory = shopDetails.inventory
-	end
-
-	if inventory then
-		local locs, targets = buildLocationsAndTargets(shopDetails)
-
-		local properties = {
-			name = shopDetails.label or shopType,
-			groups = shopDetails.groups,
-			jobs = shopDetails.jobs,
-			blip = shopDetails.blipInfo or shopDetails.blip,
-			inventory = inventory,
-		}
-
-		if shared.target then
-			properties.targets = targets or shopDetails.targets
-		else
-			properties.locations = locs or shopDetails.locations
-		end
-
-		registerShopType(shopType, properties)
-	end
+for shopType, shopDetails in pairs(lib.load('data.shops') or {}) do
+	registerShopType(shopType, shopDetails)
 end
 
-
-
+---@param shopType string
+---@param shopDetails OxShop
 exports('RegisterShop', function(shopType, shopDetails)
 	registerShopType(shopType, shopDetails)
 end)
@@ -199,7 +133,7 @@ lib.callback.register('ox_inventory:openShop', function(source, data)
 			if not shop then return end
 		end
 
-		
+		---@cast shop OxShop
 
 		if shop.groups then
 			local group = server.hasGroup(left, shop.groups)
@@ -210,7 +144,7 @@ lib.callback.register('ox_inventory:openShop', function(source, data)
 			return
 		end
 
-		
+		---@diagnostic disable-next-line: assign-type-mismatch
 		left:openInventory(left)
 		left.currentShop = shop.id
 	end
@@ -218,40 +152,7 @@ lib.callback.register('ox_inventory:openShop', function(source, data)
 	return { label = left.label, type = left.type, slots = left.slots, weight = left.weight, maxWeight = left.maxWeight }, shop
 end)
 
-local function canAffordItem(inv, currency, price, paymentType)
-	
-	if paymentType and (paymentType == 'bank' or paymentType == 'cash') then
-		local Player = nil
-		
-		if GetResourceState('qbx_core') == 'started' then
-			local QBX = exports.qbx_core
-			Player = QBX:GetPlayer(inv.id)
-			if Player then
-				local moneyType = paymentType == 'cash' and 'cash' or 'bank'
-				local playerMoney = Player.Functions.GetMoney(moneyType)
-				local canAfford = price >= 0 and playerMoney >= price
-				return canAfford or {
-					type = 'error',
-					description = locale('cannot_afford', ('%s%s'):format(locale('$'), math.groupdigits(price)))
-				}
-			end
-		
-		elseif GetResourceState('qb-core') == 'started' then
-			local QBCore = exports['qb-core']:GetCoreObject()
-			Player = QBCore.Functions.GetPlayer(inv.id)
-			if Player then
-				local moneyType = paymentType == 'cash' and 'cash' or 'bank'
-				local playerMoney = Player.Functions.GetMoney(moneyType)
-				local canAfford = price >= 0 and playerMoney >= price
-				return canAfford or {
-					type = 'error',
-					description = locale('cannot_afford', ('%s%s'):format(locale('$'), math.groupdigits(price)))
-				}
-			end
-		end
-	end
-	
-	
+local function canAffordItem(inv, currency, price)
 	local canAfford = price >= 0 and Inventory.GetItemCount(inv, currency) >= price
 
 	return canAfford or {
@@ -260,32 +161,7 @@ local function canAffordItem(inv, currency, price, paymentType)
 	}
 end
 
-local function removeCurrency(inv, currency, price, paymentType)
-	
-	if paymentType and (paymentType == 'bank' or paymentType == 'cash') then
-		local Player = nil
-		
-		if GetResourceState('qbx_core') == 'started' then
-			local QBX = exports.qbx_core
-			Player = QBX:GetPlayer(inv.id)
-			if Player then
-				local moneyType = paymentType == 'cash' and 'cash' or 'bank'
-				Player.Functions.RemoveMoney(moneyType, price, 'Shop Purchase')
-				return
-			end
-		
-		elseif GetResourceState('qb-core') == 'started' then
-			local QBCore = exports['qb-core']:GetCoreObject()
-			Player = QBCore.Functions.GetPlayer(inv.id)
-			if Player then
-				local moneyType = paymentType == 'cash' and 'cash' or 'bank'
-				Player.Functions.RemoveMoney(moneyType, price, 'Shop Purchase')
-				return
-			end
-		end
-	end
-	
-	
+local function removeCurrency(inv, currency, price)
 	Inventory.RemoveItem(inv, currency, price)
 end
 
@@ -343,7 +219,6 @@ lib.callback.register('ox_inventory:buyItem', function(source, data)
 			end
 
 			local currency = fromData.currency or 'money'
-			local paymentType = data.type 
 			local fromItem = Items(fromData.name)
 
 			local result = fromItem.cb and fromItem.cb('buying', fromItem, playerInv, data.fromSlot, shop)
@@ -361,7 +236,7 @@ lib.callback.register('ox_inventory:buyItem', function(source, data)
 					return false, false, { type = 'error', description = locale('cannot_carry') }
 				end
 
-				local canAfford = canAffordItem(playerInv, currency, price, paymentType)
+				local canAfford = canAffordItem(playerInv, currency, price)
 
 				if canAfford ~= true then
 					return false, false, canAfford
@@ -380,12 +255,11 @@ lib.callback.register('ox_inventory:buyItem', function(source, data)
 					price = fromData.price,
 					totalPrice = price,
 					currency = currency,
-					paymentType = paymentType,
 				}) then return false end
 
 				Inventory.SetSlot(playerInv, fromItem, count, metadata, data.toSlot)
 				playerInv.weight = newWeight
-				removeCurrency(playerInv, currency, price, paymentType)
+				removeCurrency(playerInv, currency, price)
 
 				if fromData.count then
 					shop.items[data.fromSlot].count = fromData.count - count
@@ -399,18 +273,6 @@ lib.callback.register('ox_inventory:buyItem', function(source, data)
 					if server.loglevel > 1 or fromData.price >= 500 then
 						lib.logger(playerInv.owner, 'buyItem', ('"%s" %s'):format(playerInv.label, message:lower()), ('shop:%s'):format(shop.label))
 					end
-				end
-
-				
-				if ShopsToLog[shopType] then
-					local logMessage = ('**ID:%d** purchased **x%d %s** from **%s** for **$%s**'):format(
-						source,
-						count,
-						metadata?.label or fromItem.label,
-						shop.label or shopType,
-						math.groupdigits(price)
-					)
-					TriggerEvent("logs:server:createlog", "shops", "Shop Purchase", "green", logMessage, false)
 				end
 
 				return true, {data.toSlot, playerInv.items[data.toSlot], shop.items[data.fromSlot].count and shop.items[data.fromSlot], playerInv.weight}, { type = 'success', description = message }

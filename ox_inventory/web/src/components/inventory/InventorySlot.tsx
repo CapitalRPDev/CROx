@@ -39,14 +39,14 @@ const getRarityColor = (rarity: string) => {
     case 'special':
       return 'rgba(255, 255, 255, 0.66)'; // Special (white)
     default:
-      return 'rgba(98, 98, 98, 0.46)'; // Default (common gray)
+      return 'rgba(0, 162, 255, 0.46)'; // Default (common gray)
   }
 };
 
 const getRarityTextColor = (rarity: string) => {
   switch (rarity) {
     case 'common':
-      return 'rgba(180, 180, 180, 0.85)'; // Common - lighter gray for text visibility
+      return 'rgba(0, 255, 234, 0.85)'; // Common - lighter gray for text visibility
     case 'uncommon':
       return 'rgba(52, 158, 38, 0.46)'; // Uncommon (bright green)
     case 'rare':
@@ -200,7 +200,7 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
       opacity: isDragging ? 0.4 : 1.0,
       backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
       borderRadius: '.2167vw',
-      border: isOver ? '1px solid rgba(168, 85, 247, 0.6)' : '',
+      border: isOver ? '1px solid #00aeff' : '',
     }}
 
     {...(isSlotWithItem(item) && { style: {

@@ -1,5 +1,5 @@
 assert(lib.checkDependency('qbx_core', '1.18.1'), 'qbx_core v1.18.1 or higher is required')
-assert(lib.checkDependency('vehicles', '1.2.0'), 'vehicles v1.2.0 or higher is required')
+assert(lib.checkDependency('qbx_vehicles', '1.2.0'), 'qbx_vehicles v1.2.0 or higher is required')
 local Inventory = require 'modules.inventory.server'
 local QBX = exports.qbx_core
 
@@ -103,5 +103,5 @@ end
 ---@return number | string
 ---@diagnostic disable-next-line: duplicate-set-field
 function server.getOwnedVehicleId(entityId)
-    return Entity(entityId).state.vehicleid or exports.vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(entityId))
+    return Entity(entityId).state.vehicleid or exports.qbx_vehicles:GetVehicleIdByPlate(GetVehicleNumberPlateText(entityId))
 end
