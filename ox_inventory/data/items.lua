@@ -82,6 +82,9 @@ return {
 		type = "item",
 		image = "handcuffs.png",
 		useable = true,
+		client = {
+			event = 'CPolice:Client:UseCuffItem'
+		}
 	},
 	['handcuffs_key'] = {
 		name = 'handcuffs_key',
@@ -90,7 +93,11 @@ return {
 		type = "item",
 		image = "handcuffs_key.png",
 		useable = true,
+		client = {
+			event = 'CPolice:Client:UseCuffKey'
+		}
 	},
+
 	['weed_seed'] = {
 		name = 'weed_seed',
 		label = 'Weed Seed',
