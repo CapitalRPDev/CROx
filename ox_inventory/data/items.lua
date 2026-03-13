@@ -75,6 +75,22 @@ return {
 		image = "gang_tablet.png",
 		useable = true,
 	},
+	['handcuffs'] = {
+		name = 'handcuffs',
+		label = 'Handcuffs',
+		weight = 100,
+		type = "item",
+		image = "handcuffs.png",
+		useable = true,
+	},
+	['handcuffs_key'] = {
+		name = 'handcuffs_key',
+		label = 'Handcuffs Key',
+		weight = 100,
+		type = "item",
+		image = "handcuffs_key.png",
+		useable = true,
+	},
 	['weed_seed'] = {
 		name = 'weed_seed',
 		label = 'Weed Seed',
