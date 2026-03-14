@@ -97,6 +97,28 @@ return {
 			event = 'CPolice:Client:UseCuffKey'
 		}
 	},
+	['evidence_bag'] = {
+		name = 'evidence_bag',
+		label = 'Evidence Bag',
+		weight = 100,
+		type = "item",
+		image = "evidence_bag.png",
+		useable = true,
+		client = {
+			event = 'CPolice:Client:UseEvidenceBag'
+		}
+	},
+		['evidence_pack'] = {
+		name = 'evidence_pack',
+		label = 'Evidence Pack',
+		weight = 100,
+		type = "item",
+		image = "evidence_pack.png",
+		useable = true,
+		client = {
+			event = 'CPolice:Client:UseEvidencePack'
+		}
+	},
 
 	['weed_seed'] = {
 		name = 'weed_seed',
