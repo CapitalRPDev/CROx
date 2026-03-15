@@ -203,6 +203,55 @@ return {
 		close = true,
 	},
 
+    ["kq_amphetamines_lab_kit"] = {
+        label = "Amphetamines cooking kit",
+        weight = 5000,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_amphetamines_low"] = {
+        label = "Amphetamines (Low purity)",
+        weight = 100,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_amphetamines_mid"] = {
+        label = "Amphetamines (Medium purity)",
+        weight = 100,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_amphetamines_high"] = {
+        label = "Amphetamines (High purity)",
+        weight = 100,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_sulfuric_acid"] = {
+        label = "Sulfuric Acid",
+        weight = 500,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_sodium"] = {
+        label = "Sodium Borohydride",
+        weight = 500,
+        stack = true,
+        close = true,
+    },
+
+    ["kq_caffeine_powder"] = {
+        label = "Caffeine powder",
+        weight = 500,
+        stack = true,
+        close = true,
+    },
+
 	["kq_lithium"] = {
 		label = "Lithium pack",
 		weight = 300,
