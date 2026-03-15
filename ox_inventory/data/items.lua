@@ -93,6 +93,7 @@ return {
 		type = "item",
 		image = "handcuffs_key.png",
 		useable = true,
+		stack = false,
 		client = {
 			event = 'CPolice:Client:UseCuffKey'
 		}
@@ -104,6 +105,7 @@ return {
 		type = "item",
 		image = "evidence_bag.png",
 		useable = true,
+		stack = false,
 		client = {
 			event = 'CPolice:Client:UseEvidenceBag'
 		}
@@ -115,6 +117,7 @@ return {
 		type = "item",
 		image = "evidence_pack.png",
 		useable = true,
+		stack = false,
 		client = {
 			event = 'CPolice:Client:UseEvidencePack'
 		}

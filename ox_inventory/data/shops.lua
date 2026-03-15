@@ -104,7 +104,7 @@ return {
 		}
 	},
 
-	PoliceArmoury = {
+--[[ 	PoliceArmoury = {
 		name = 'Police Armoury',
 		groups = shared.police,
 		blip = {
@@ -123,7 +123,7 @@ return {
 			{ loc = vec3(453.21, -980.03, 30.68), length = 0.5, width = 3.0, heading = 270.0, minZ = 30.5, maxZ = 32.0, distance = 6 }
 		}
 	},
-
+ ]]
 	Medicine = {
 		name = 'Medicine Cabinet',
 		groups = {
