@@ -122,7 +122,59 @@ return {
 		label = 'Action Figure',
 		weight = 100,
 	},
+	-- fingerprint evidence
+	['evidence_fingerprint'] = {
+		label = 'Fingerprint Sample',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A fingerprint sample collected from a crime scene',
+	},
 
+	-- footprint evidence
+	['evidence_footprint'] = {
+		label = 'Footprint Sample',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A footprint sample collected from a crime scene',
+	},
+
+	-- blood evidence
+	['evidence_blood'] = {
+		label = 'Blood Sample',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A blood sample collected from a crime scene',
+	},
+
+	-- dna evidence
+	['evidence_dna'] = {
+		label = 'DNA Sample',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A DNA sample collected from a crime scene',
+	},
+
+	-- shell casing evidence
+	['evidence_shell_casing'] = {
+		label = 'Shell Casing',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A shell casing collected from a crime scene',
+	},
+
+	-- fiber evidence
+	['evidence_fiber'] = {
+		label = 'Fiber Sample',
+		weight = 10,
+		stack = false,
+		close = true,
+		description = 'A fiber sample collected from a crime scene',
+	},
 	["nominos_ring"] = {
 		label = 'Nominos Ring',
 		weight = 50,
