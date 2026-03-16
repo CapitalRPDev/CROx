@@ -875,7 +875,69 @@ return {
 			event = 'CPolice:Client:UseEvidenceBag'
 		}
 	},
+['stolen_letter'] = {
+    label = 'Stolen Letter',
+    weight = 10,
+    stack = false,
+    close = true,
+    description = 'A letter that probably should have been delivered weeks ago',
+},
 
+['birthday_card'] = {
+    label = 'Birthday Card',
+    weight = 5,
+    stack = false,
+    close = true,
+    description = 'Happy Birthday... to someone. Probably has a fiver in it',
+},
+
+['final_demand'] = {
+    label = 'Final Demand',
+    weight = 10,
+    stack = false,
+    close = true,
+    description = 'A very angry red letter. Someone is in trouble',
+},
+
+['mystery_parcel'] = {
+    label = 'Mystery Parcel',
+    weight = 200,
+    stack = false,
+    close = true,
+    description = 'No idea what is in here. Could be anything',
+},
+
+['pizza_voucher'] = {
+    label = 'Pizza Voucher',
+    weight = 1,
+    stack = false,
+    close = true,
+    description = '50% off at Cluckin Bell. Expired last month',
+},
+
+['love_letter'] = {
+    label = 'Love Letter',
+    weight = 5,
+    stack = false,
+    close = true,
+    description = 'Someone poured their heart out in this. Bit cringe tbh',
+},
+
+['cheque'] = {
+    label = 'Cheque',
+    weight = 5,
+    stack = false,
+    close = true,
+    description = 'Who even uses cheques anymore',
+},
+
+['jury_summons'] = {
+    label = 'Jury Summons',
+    weight = 10,
+    stack = false,
+    close = true,
+    description = 'Not your problem anymore',
+},
 		['evidence_report'] = {
 			label = 'Forensic Report',
 			weight = 10,
