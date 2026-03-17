@@ -958,7 +958,54 @@ return {
 			event = 'CPolice:Client:UseEvidencePack'
 		}
 	},
-
+['copper_wire'] = {
+    name = 'copper_wire',
+    label = 'Copper Wire',
+    weight = 500,
+    type = 'item',
+    image = 'copper_wire.png',
+    useable = false,
+},
+['scrap_metal'] = {
+    name = 'scrap_metal',
+    label = 'Scrap Metal',
+    weight = 1000,
+    type = 'item',
+    image = 'scrap_metal.png',
+    useable = false,
+},
+['aluminium'] = {
+    name = 'aluminium',
+    label = 'Aluminium',
+    weight = 800,
+    type = 'item',
+    image = 'aluminium.png',
+    useable = false,
+},
+['electronic_parts'] = {
+    name = 'electronic_parts',
+    label = 'Electronic Parts',
+    weight = 300,
+    type = 'item',
+    image = 'electronic_parts.png',
+    useable = false,
+},
+['copper_pipe'] = {
+    name = 'copper_pipe',
+    label = 'Copper Pipe',
+    weight = 1200,
+    type = 'item',
+    image = 'copper_pipe.png',
+    useable = false,
+},
+['electrical_wire'] = {
+    name = 'electrical_wire',
+    label = 'Electrical Wire',
+    weight = 400,
+    type = 'item',
+    image = 'electrical_wire.png',
+    useable = false,
+},
 	['weed_seed'] = {
 		name = 'weed_seed',
 		label = 'Weed Seed',
