@@ -59,7 +59,6 @@ const Inventory: React.FC = () => {
     <>
       <Fade in={inventoryVisible}>
         <div className="inventory-wrapper" onClick={CloseTooltip}>
-          <p></p>
           <InventoryInfo />
           <LeftInventory />
           <InventoryControl />

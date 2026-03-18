@@ -26,7 +26,7 @@ const RightInventory: React.FC = () => {
   }
 
   return(
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
       <InventoryGrid inventory={rightInventory} />
       {rightInventory.type === 'shop' && (
         <div style={{ 

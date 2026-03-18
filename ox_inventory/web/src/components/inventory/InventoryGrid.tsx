@@ -7,6 +7,35 @@ import { useIntersection } from '../../hooks/useIntersection';
 
 const PAGE_SIZE = 30;
 
+const SectionIcon: React.FC<{ type: string }> = ({ type }) => {
+  if (type === 'hotbar') {
+    return (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM8 18H4V6H8V18ZM14 18H10V6H14V18ZM20 18H16V6H20V18Z" fill="currentColor"/>
+      </svg>
+    );
+  }
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 6H12L10 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6ZM20 18H4V6H9.17L11.17 8H20V18Z" fill="currentColor"/>
+    </svg>
+  );
+};
+
+const getTitle = (label: string, type: string): string => {
+  if (type === 'hotbar' || label === 'hotbar') return 'Hotbar';
+  if (type === 'player') return 'Pockets';
+  return label;
+};
+
+const getSubtitle = (label: string, type: string): string => {
+  if (type === 'hotbar' || label === 'hotbar') return 'Quickly equip your items';
+  if (type === 'player') return 'Items on your character';
+  if (type === 'shop') return 'Browse available items';
+  if (type === 'crafting') return 'Craft new items';
+  return 'Store necessary assets';
+};
+
 const InventoryGrid: React.FC<{ inventory: Inventory }> = ({ inventory }) => {
   const weight = useMemo(
     () => (inventory.maxWeight !== undefined ? Math.floor(getTotalWeight(inventory.items) * 1000) / 1000 : 0),
@@ -22,78 +51,49 @@ const InventoryGrid: React.FC<{ inventory: Inventory }> = ({ inventory }) => {
       setPage((prev) => ++prev);
     }
   }, [entry]);
+
+  const weightPercent = inventory.maxWeight ? Math.min((weight / inventory.maxWeight) * 100, 100) : 0;
+
   return (
     <>
     {inventory.label !== 'hotbar' && (
-      <div 
+      <div
         className="inventory-grid-wrapper"
         data-shop={inventory.type === 'shop' ? 'true' : undefined}
         style={{
           pointerEvents: isBusy ? 'none' : 'auto',
-          height: (inventory.type === 'player' ? '50.4vh' : '68.2963vh'),
-          overflow: (inventory.label === 'hotbar' ? '' : 'auto'),
+          height: (inventory.type === 'player' ? '50.4vh' : '71vh'),
+          overflow: 'hidden',
         }}
       >
         <div className="inventory-head">
-          <div className="inventory-grid-header-wrapper">
-          <p>{inventory.label}</p>
-          </div>
-          <div className='inventory-grid-header-bottom'>
-             <div className='custom-weight-bar' style={{ clipPath: 'inset(0)' }}>
-                <div className='bar' style={{
-                   width: `${inventory.maxWeight ? (weight / inventory.maxWeight) * 100 : 0}%`,
-                   maxWidth: '100%',
-                   clipPath: 'inset(0)',
-                }}>
-                  <svg style={{
-                    position:'absolute',
-                    left: 0,
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    overflow: 'hidden',
-                  }} viewBox="0 0 68 10" fill="none" preserveAspectRatio="xMidYMid meet">
-                    <rect x="59" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#fff" fillOpacity="1" />
-                    <rect x="44" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#fff" fillOpacity="1"/>
-                    <rect x="30" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#fff" fillOpacity="1"/>
-                    <rect x="15" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#fff" fillOpacity="1"/>
-                    <rect width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#fff" fillOpacity="1"/>
-                  </svg>
-                </div>
-                  <svg style={{
-                    position:'absolute',
-                    top: '0',
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    maxWidth: '100%',
-                    maxHeight: '100%',
-                    overflow: 'hidden',
-                  }} viewBox="0 0 68 10" fill="none" preserveAspectRatio="xMidYMid meet">
-                    <rect x="59" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#8D8D8D" fillOpacity="0.2" />
-                    <rect x="44" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#8D8D8D" fillOpacity="0.2"/>
-                    <rect x="30" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#8D8D8D" fillOpacity="0.2"/>
-                    <rect x="15" width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#8D8D8D" fillOpacity="0.2"/>
-                    <rect width=".4688vw" height="0.8511vh" rx=".2344vw" fill="#8D8D8D" fillOpacity="0.2"/>
-                  </svg>
-              </div>
-
-            {inventory.maxWeight && (
-              <div style={{
-                height: '100%',
-                display:'flex',
-                alignContent: 'center',
-                justifyContent: 'center'
-              }}>
-                <p className='weight1'>{weight / 1000}/ </p><span className='weight2'> {inventory.maxWeight / 1000}kg</span>
-              </div>
-            )}
+          <div className="inventory-head-left">
+            <div className="inventory-head-icon">
+              <SectionIcon type={inventory.type} />
             </div>
-
+            <div className="inventory-head-titles">
+              <span className="inventory-head-title">{getTitle(inventory.label || '', inventory.type)}</span>
+              <span className="inventory-head-subtitle">{getSubtitle(inventory.label || '', inventory.type)}</span>
+            </div>
+          </div>
+          {inventory.maxWeight && (
+            <div className="inventory-head-right">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.5 }}>
+                <path d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15 8H9V6C9 4.34 10.34 3 12 3C13.66 3 15 4.34 15 6V8Z" fill="white"/>
+              </svg>
+              <span className="inventory-head-weight">{weight / 1000} / {inventory.maxWeight / 1000} kg</span>
+              <div className="inventory-weight-segments">
+                {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                  <div
+                    key={i}
+                    className={`weight-segment ${weightPercent > i * 10 ? 'weight-segment-filled' : ''}`}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        <div 
+        <div
           className="inventory-grid-container"
           style={inventory.type === 'shop' && inventory.items.length > 15 ? {
             maxHeight: 'calc(3 * (11.3333vh + 0.22vh) + 2 * 0.3125vw)',
@@ -122,19 +122,25 @@ const InventoryGrid: React.FC<{ inventory: Inventory }> = ({ inventory }) => {
 
       {inventory.label == 'hotbar' && (
            <div
-           className="inventory-grid-wrapper"
+           className="inventory-grid-wrapper inventory-grid-wrapper-hotbar"
            style={{
             pointerEvents: isBusy ? 'none' : 'auto',
-            height: (inventory.type === 'player' ? '14vh' : '68.2963vh'),
-            overflow: (inventory.label === 'hotbar' ? '' : 'auto'),
+            height: 'auto',
+            overflow: 'visible',
            }}
          >
          <div className="inventory-head">
-         <div className="inventory-grid-header-wrapper">
-          <p className='hotbar-title'>{inventory.label}</p>
-          </div>
+           <div className="inventory-head-left">
+             <div className="inventory-head-icon">
+               <SectionIcon type="hotbar" />
+             </div>
+             <div className="inventory-head-titles">
+               <span className="inventory-head-title">{getTitle(inventory.label || '', inventory.type)}</span>
+               <span className="inventory-head-subtitle">Quickly equip your items</span>
+             </div>
+           </div>
          </div>
-         <div className="inventory-grid-container" ref={containerRef}>
+         <div className="inventory-grid-container inventory-grid-hotbar" ref={containerRef}>
            <>
            {inventory.items.slice(0, (page + 1) * PAGE_SIZE).map((item, index) => (
               <InventorySlot

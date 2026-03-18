@@ -2,7 +2,6 @@ import React, { useCallback, useRef } from 'react';
 import { DragSource, Inventory, InventoryType, Slot, SlotWithItem } from '../../typings';
 import { useDrag, useDragDropManager, useDrop } from 'react-dnd';
 import { useAppDispatch } from '../../store';
-import WeightBar from '../utils/WeightBar';
 import { onDrop } from '../../dnd/onDrop';
 import { onBuy } from '../../dnd/onBuy';
 import { Items } from '../../store/items';
@@ -24,42 +23,74 @@ interface SlotProps {
   hotbar?: boolean;
 }
 
-const getRarityColor = (rarity: string) => {
-  switch (rarity) {
-    case 'common':
-      return 'rgba(98, 98, 98, 0.4)'; // Common
-    case 'uncommon':
-      return 'rgba(52, 158, 38, 0.46)'; // Uncommon (bright green)
-    case 'rare':
-      return 'rgba(31, 103, 171, 0.46)'; // Rare (bright blue)
-    case 'epic':
-      return 'rgba(163, 53, 238, 0.46)'; // Epic (bright purple)
-    case 'legendary':
-      return 'rgba(255, 128, 0, 0.46)'; // Legendary (orange-gold)
-    case 'special':
-      return 'rgba(255, 255, 255, 0.66)'; // Special (white)
-    default:
-      return 'rgba(0, 162, 255, 0.46)'; // Default (common gray)
-  }
-};
+// Hover info panel for item details
+const SlotHoverInfo: React.FC<{ item: SlotWithItem }> = ({ item }) => {
+  const itemData = Items[item.name];
+  const label = item.metadata?.label || itemData?.label || item.name;
+  const isWeapon = item.name?.startsWith('weapon_');
+  const isAmmo = item.name?.startsWith('ammo_');
+  const itemType = isWeapon ? 'Weapon' : isAmmo ? 'Ammo' : 'Item';
+  const ammoName = itemData?.ammoName && Items[itemData.ammoName]?.label;
 
-const getRarityTextColor = (rarity: string) => {
-  switch (rarity) {
-    case 'common':
-      return 'rgba(0, 255, 234, 0.85)'; // Common - lighter gray for text visibility
-    case 'uncommon':
-      return 'rgba(52, 158, 38, 0.46)'; // Uncommon (bright green)
-    case 'rare':
-      return 'rgba(31, 103, 171, 0.46)'; // Rare (bright blue)
-    case 'epic':
-      return 'rgba(163, 53, 238, 0.46)'; // Epic (bright purple)
-    case 'legendary':
-      return 'rgba(255, 128, 0, 0.46)'; // Legendary (orange-gold)
-    case 'special':
-      return 'rgba(255, 255, 255, 0.66)'; // Special (white)
-    default:
-      return 'rgba(180, 180, 180, 0.85)'; // Default (common gray) - lighter gray for text visibility
+  const rows: { label: string; value: string | number }[] = [];
+
+  if (item.durability !== undefined) {
+    rows.push({ label: 'Durability', value: Math.floor(item.durability) });
   }
+  if (item.metadata?.ammo !== undefined) {
+    rows.push({ label: 'Ammo', value: item.metadata.ammo });
+  }
+  if (ammoName) {
+    rows.push({ label: 'Ammo type', value: ammoName });
+  }
+  if (item.metadata?.serial) {
+    rows.push({ label: 'Serial number', value: item.metadata.serial });
+  }
+  if (item.weight > 0) {
+    rows.push({
+      label: 'Weight',
+      value: item.weight >= 1000
+        ? `${(item.weight / 1000).toLocaleString('en-us', { minimumFractionDigits: 1 })}kg`
+        : `${item.weight}g`
+    });
+  }
+
+  return (
+    <div className="slot-hover-info" onClick={(e) => e.stopPropagation()}>
+      {/* Header with image + name */}
+      <div className="slot-hover-header">
+        <div className="slot-hover-thumb">
+          <img
+            src={getItemUrl(item as SlotWithItem)}
+            alt={label}
+          />
+        </div>
+        <div className="slot-hover-name-area">
+          <span className="slot-hover-name">{label}</span>
+          <span className="slot-hover-type">{itemType}</span>
+        </div>
+      </div>
+
+      {/* Info rows */}
+      {rows.length > 0 && (
+        <div className="slot-hover-rows">
+          {rows.map((row, i) => (
+            <div key={i} className="slot-hover-row">
+              <span className="slot-hover-row-label">{row.label}:</span>
+              <span className="slot-hover-row-value">{row.value}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Description */}
+      {(item.metadata?.description || itemData?.description) && (
+        <div className="slot-hover-desc">
+          {item.metadata?.description || itemData?.description}
+        </div>
+      )}
+    </div>
+  );
 };
 
 const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> = (
@@ -106,7 +137,6 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
         dispatch(closeTooltip());
         switch (source.inventory) {
           case InventoryType.SHOP:
-            // Disabled - shop items must go through shopping cart
             return;
           case InventoryType.CRAFTING:
             onCraft(source, { inventory: inventoryType, item: { slot: item.slot } });
@@ -142,6 +172,11 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
 
   const handleContext = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setShowInfo(false);
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
     if (inventoryType !== 'player' || !isSlotWithItem(item)) return;
     dispatch(openTooltip({ item, inventoryType, coords: { x: event.clientX, y: event.clientY } }));
     dispatch(openContextMenu({ item }));
@@ -150,29 +185,19 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     dispatch(closeTooltip());
     if (timerRef.current) clearTimeout(timerRef.current);
-    
-    // Handle shop item clicks (double-click or shift+click to add to cart)
+
     if (inventoryType === 'shop' && isSlotWithItem(item)) {
       if (event.detail === 2 || event.shiftKey) {
-        // Create a drag source object to simulate the drop behavior
         const simulatedSource: DragSource = {
-          item: {
-            name: item.name,
-            slot: item.slot,
-          },
+          item: { name: item.name, slot: item.slot },
           inventory: 'shop'
         };
-        
-        // Dispatch custom event with the simulated source
-        const addToCartEvent = new CustomEvent('addToShoppingCart', {
-          detail: simulatedSource
-        });
+        const addToCartEvent = new CustomEvent('addToShoppingCart', { detail: simulatedSource });
         window.dispatchEvent(addToCartEvent);
         return;
       }
     }
-    
-    // Original click handlers for non-shop items
+
     if (event.ctrlKey && isSlotWithItem(item) && inventoryType !== 'shop' && inventoryType !== 'crafting') {
       onDrop({ item: item, inventory: inventoryType });
     } else if (event.altKey && isSlotWithItem(item) && inventoryType === 'player') {
@@ -182,8 +207,36 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
 
   const refs = useMergeRefs([connectRef, ref]);
   const [hovered, setHovered] = React.useState(false);
+  const [showInfo, setShowInfo] = React.useState(false);
+  const hoverTimerRef = useRef<number | null>(null);
+
   if (inventoryType === 'player' && item.slot <= 5 && !hotbar) {
     return (<></>);
+  }
+
+  const hasItem = isSlotWithItem(item);
+
+  const onMouseEnterSlot = () => {
+    setHovered(true);
+    if (hasItem && !isDragging) {
+      hoverTimerRef.current = window.setTimeout(() => {
+        setShowInfo(true);
+      }, 400) as unknown as number;
+    }
+  };
+
+  const onMouseLeaveSlot = () => {
+    setHovered(false);
+    setShowInfo(false);
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  };
+
+  // Hide info when dragging starts
+  if (isDragging && showInfo) {
+    setShowInfo(false);
   }
 
   return (
@@ -191,35 +244,19 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
     ref={refs}
     onContextMenu={handleContext}
     onClick={handleClick}
-    className="inventory-slot-wrapper"
+    className={`inventory-slot-wrapper ${hasItem ? 'has-item' : ''} ${isOver ? 'is-drop-target' : ''} ${hovered ? 'is-hovered' : ''}`}
     style={{
       filter:
         !canPurchaseItem(item, { type: inventoryType, groups: inventoryGroups }) || !canCraftItem(item, inventoryType)
           ? 'brightness(80%) grayscale(100%)'
           : undefined,
       opacity: isDragging ? 0.4 : 1.0,
-      backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
-      borderRadius: '.2167vw',
-      border: isOver ? '1px solid #00aeff' : '',
     }}
-
-    {...(isSlotWithItem(item) && { style: {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      boxShadow: '0px 0px 20.8px -8px rgba(255, 255, 255, 0.25)',
-      filter: 'drop-shadow(0 0 0.3vw rgba(255, 255, 255, 0.3))',
-      borderRadius: '.2167vw',
-
-     }})}
-
-    onMouseOver={() => setHovered(true)}
-    onMouseLeave={() => setHovered(false)}
+    onMouseEnter={onMouseEnterSlot}
+    onMouseLeave={onMouseLeaveSlot}
     >
     <div
-      className="inventory-slot"
+      className={`inventory-slot ${hasItem ? 'inventory-slot-filled' : ''}`}
       style={{
         filter:
           !canPurchaseItem(item, { type: inventoryType, groups: inventoryGroups }) || !canCraftItem(item, inventoryType)
@@ -227,47 +264,31 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
             : undefined,
         opacity: isDragging ? 0.4 : 1.0,
         backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(141, 141, 141, 0.20)',
-        boxShadow: `inset 0 0 10px ${getRarityColor(item.rarity || 'default')}`,
-        border: `1px solid ${getRarityColor(item.rarity || 'default')}`,
-        borderRadius: '.2167vw',
-
       }}
     >
-      {inventoryType === 'player' && item.slot <= 5 && <div className="inventory-slot-number">{item.slot}</div>}
-      {isSlotWithItem(item) && (
-        <div
-          className="item-slot-wrapper"
-          onMouseEnter={() => {
-            timerRef.current = window.setTimeout(() => {
+      {inventoryType === 'player' && item.slot <= 5 && (
+        <div className="inventory-slot-number">
+          <svg viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="slot-hex-svg">
+            <path d="M14.268 1.5C15.0378 1.056 15.9622 1.056 16.732 1.5L28.1244 8C28.8942 8.444 29.3564 9.262 29.3564 10.15V25.15C29.3564 26.038 28.8942 26.856 28.1244 27.3L16.732 33.8C15.9622 34.244 15.0378 34.244 14.268 33.8L2.8756 27.3C2.1058 26.856 1.6436 26.038 1.6436 25.15V10.15C1.6436 9.262 2.1058 8.444 2.8756 8L14.268 1.5Z" fill="rgba(0, 140, 210, 0.3)" stroke="rgba(0, 174, 255, 0.5)" strokeWidth="1.2"/>
+          </svg>
+          <span className="slot-hex-num">{item.slot}</span>
+        </div>
+      )}
 
-            }, 500) as unknown as number;
-          }}
-          onMouseLeave={() => {
+      {hasItem && item.count && (
+        <div className="slot-count-badge">
+          <span>{item.count.toLocaleString('en-us')}x</span>
+        </div>
+      )}
 
-            if (timerRef.current) {
-              clearTimeout(timerRef.current);
-              timerRef.current = null;
-            }
-          }}
-        >
+      {hasItem && (
+        <div className="item-slot-wrapper">
           <div
             className={
               inventoryType === 'player' && item.slot <= 5 ? 'item-hotslot-header-wrapper' : 'item-slot-header-wrapper'
             }
           >
             <div className="item-slot-info-wrapper">
-              <p className="rarityText" style={{ color: getRarityTextColor(item.rarity || 'default') }}>
-                {item.rarity ? item.rarity.toUpperCase() : 'COMMON'}
-              </p>
-              <p className="countText">
-                {item.count ? item.count.toLocaleString('en-us') + `x` : ''}
-              </p>
             </div>
           </div>
           <div>
@@ -291,10 +312,7 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
                 ) : (
                   <>
                     {item.price > 0 && (
-                      <div
-                        className="item-slot-price-wrapper"
-                        style={{ color: item.currency === 'money' || !item.currency ? '#FFF' : '#FFF' }}
-                      >
+                      <div className="item-slot-price-wrapper">
                         <p>
                           {Locale.$ || '£ '}
                           {item.price.toLocaleString('en-uk')}
@@ -305,67 +323,16 @@ const InventorySlot: React.ForwardRefRenderFunction<HTMLDivElement, SlotProps> =
                 )}
               </>
             )}
-            {inventoryType !== 'shop' && item?.durability !== undefined && (
-              <div style={{ position: 'absolute', bottom: '0.2rem', left: '0.2rem', right: '0.2rem', zIndex: 10 }}>
-                <WeightBar percent={item.durability} durability rarity={item.rarity} />
-              </div>
-            )}
 
-                <div 
-                  className="inventory-slot-label-box" 
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '0.5rem',
-                    marginBottom: (() => {
-                      if (inventoryType === 'shop' || item?.durability === undefined) return '0';
-                      const label = item.metadata?.label || Items[item.name]?.label || item.name;
-                      const [first, ...rest] = label.split(' ');
-                      // Single line labels need less margin, multi-line labels need more
-                      return rest.length > 0 ? '0.8rem' : '0.25rem';
-                    })()
-                  }}
-                >
-                  {/* Label */}
-                  <div className="inventory-slot-label-text" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {(() => {
-                      const label =
-                        item.metadata?.label || Items[item.name]?.label || item.name;
-                      const [first, ...rest] = label.split(' ');
-                      return (
-                        <>
-                          {first}
-                          {rest.length > 0 && <br />}
-                          {rest.join(' ')}
-                        </>
-                      );
-                    })()}
-                  </div>
-
-                  {/* Weight */}
-                  <p
-                    className="weightText"
-                    style={{
-                      position: 'relative',
-                      top: '0.1rem',
-                      right: '0.3rem',
-                      whiteSpace: 'nowrap',
-                      margin: 0,
-                    }}
-                  >
-                    {item.weight > 0
-                      ? item.weight >= 1000
-                        ? `${(item.weight / 1000).toLocaleString('en-us', {
-                            minimumFractionDigits: 2,
-                          })}kg`
-                        : `${item.weight.toLocaleString('en-us')}g`
-                      : ''}
-                  </p>
-                </div>
               </div>
           </div>
       )}
     </div>
+
+    {/* Hover info panel */}
+    {showInfo && hasItem && !isDragging && (
+      <SlotHoverInfo item={item as SlotWithItem} />
+    )}
   </div>
   );
 };

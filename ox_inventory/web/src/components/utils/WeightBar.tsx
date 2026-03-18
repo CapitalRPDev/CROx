@@ -65,12 +65,12 @@ const WeightBar: React.FC<{ percent: number; durability?: boolean; rarity?: stri
             ? rarityColor 
               ? `linear-gradient(90deg, ${rarityColor} 0%, ${rarityColor} 100%)`
               : `linear-gradient(90deg, ${color} 0%, ${color} 100%)`
-            : 'linear-gradient(90deg, #A855F7  0%, #A855F7  100%)',
-          boxShadow: durability 
+            : 'linear-gradient(90deg, #00aeff 0%, #00aeff 100%)',
+          boxShadow: durability
             ? rarityColor
               ? `0px 0px 8px 0px ${rarityColor}80`
               : `0px 0px 8px 0px ${color}80`
-            : '0px 0px 16px 0px rgba(168, 85, 247, 0.40)',
+            : '0px 0px 16px 0px rgba(0, 174, 255, 0.35)',
           transition: `background ${0.3}s ease, width ${0.3}s ease`,
         }}
       ></div>

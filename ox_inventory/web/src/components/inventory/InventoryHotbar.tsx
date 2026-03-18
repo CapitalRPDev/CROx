@@ -30,38 +30,29 @@ const InventoryHotbar: React.FC = () => {
         {items.map((item) => (
           <div
             key={`hotbar-wrapper-${item.slot}`}
-            className="inventory-slot-wrapper"
-
-            {...(isSlotWithItem(item) && {
-              style: {
-                background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.222) 0%, rgba(35, 139, 231, 0.4) 97.02%)',
-                border: '1px solid #CBAB39',
-              }
-            })}
+            className={`hotbar-slot-outer ${isSlotWithItem(item) ? 'hotbar-slot-filled' : ''}`}
           >
             <div
               className="hotbar-item-slot"
               style={{
                 backgroundImage: `url(${item?.name ? getItemUrl(item as SlotWithItem) : 'none'}`,
-                borderRadius: '4px',
               }}
               key={`hotbar-${item.slot}`}
             >
-              {!isSlotWithItem(item) && (
-                <div className="inventory-slot-bg-number">
-                  <p>
-                    {item.slot}
-                  </p>
-                </div>
-              )}
               {isSlotWithItem(item) && (
                 <div className="item-slot-wrapper hotbar-slot-wrapper">
-                  <div className="inventory-slot-number">{item.slot}</div>
-                    <div className="item-slot-info-wrapper hotbar-slot-info">
+                    <div className="hotbar-count">
                       <p>{item.count ? item.count.toLocaleString('en-us') + `x` : ''}</p>
                     </div>
                 </div>
               )}
+            </div>
+            {/* Hexagonal number badge */}
+            <div className="hotbar-hex-badge">
+              <svg viewBox="0 0 32 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="hotbar-hex-svg">
+                <path d="M14.268 1.5C15.0378 1.056 15.9622 1.056 16.732 1.5L28.1244 8C28.8942 8.444 29.3564 9.262 29.3564 10.15V25.15C29.3564 26.038 28.8942 26.856 28.1244 27.3L16.732 33.8C15.9622 34.244 15.0378 34.244 14.268 33.8L2.8756 27.3C2.1058 26.856 1.6436 26.038 1.6436 25.15V10.15C1.6436 9.262 2.1058 8.444 2.8756 8L14.268 1.5Z" className="hotbar-hex-path"/>
+              </svg>
+              <span className="hotbar-hex-number">{item.slot}</span>
             </div>
           </div>
         ))}
