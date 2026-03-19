@@ -99,6 +99,12 @@ Item('bandage', function(data, slot)
 	end)
 end)
 
+Item('craftingtable', function(data, slot)
+    local model = "gr_prop_gr_bench_04b"
+    local id = "CraftingTable"..math.random(111111,999999)
+    TriggerEvent("zat-crafting:client:PlaceTable", id, model)
+end)
+
 Item('armour', function(data, slot)
 	if GetPedArmour(cache.ped) < 100 then
 		ox_inventory:useItem(data, function(data)
