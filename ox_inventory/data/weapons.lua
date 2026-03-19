@@ -720,7 +720,14 @@ return {
 			weight = 600,
 			throwable = true,
 		},
+		['WEAPON_SPECTER_MCX'] = {
+			label = 'Specter MCX',
+			weight = 3500,
+			durability = 0.03,
+			ammoname = 'ammo-rifle',
+		},
 	},
+
 
 	Components = {
 		['at_flashlight'] = {
@@ -1779,6 +1786,44 @@ return {
 					`COMPONENT_SMG_MK2_CAMO_IND_01`,
 					`COMPONENT_SNSPISTOL_MK2_CAMO_IND_01`,
 					`COMPONENT_SPECIALCARBINE_MK2_CAMO_IND_01`,
+				},
+				usetime = 2500
+			}
+		},
+		['at_mcx_suppressor'] = {
+			label = 'MCX Suppressor',
+			weight = 280,
+			type = 'muzzle',
+			client = {
+				image = 'attachment_mcx_suppressor.png',
+				component = {
+					`COMPONENT_AT_AR_SPECTER_MCX_SUPP`,
+				},
+				usetime = 2500
+			}
+		},
+
+		['at_mcx_scope'] = {
+			label = 'MCX Scope',
+			weight = 280,
+			type = 'sight',
+			client = {
+				image = 'attachment_mcx_scope.png',
+				component = {
+					`COMPONENT_AT_SPECTER_MCX_SCOPE_MEDIUM`,
+				},
+				usetime = 2500
+			}
+		},
+
+		['at_mcx_flashlight'] = {
+			label = 'MCX Flashlight',
+			weight = 120,
+			type = 'flashlight',
+			client = {
+				image = 'attachment_mcx_flashlight.png',
+				component = {
+					`COMPONENT_AT_AR_SPECTER_MCX_FLSH`,
 				},
 				usetime = 2500
 			}
