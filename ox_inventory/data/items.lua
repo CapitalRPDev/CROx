@@ -3533,7 +3533,14 @@ return {
 			image = "fuse_box.png",
 		}
 	},
-	
+	['craftingtable'] = {
+    label = 'Crafting Table',
+    weight = 100,
+    stack = false,
+    close = true,
+    description = 'Crafting Table',
+    image = 'craftingtable.png',
+},
 	
 	-- add this if you don't have it
 	
