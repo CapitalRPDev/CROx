@@ -3413,6 +3413,141 @@ return {
     weight = 100,
     stack = true,
 },
+	["vh_gold_necklace"] = {
+		label = "Gold Necklace",
+		weight = 200,
+		stack = true,
+		close = false,
+		description = "A valuable gold necklace stolen from a jewelry display.",
+		client = {
+			image = "vh_gold_necklace.png",
+		}
+	},
+
+	["vh_diamond_necklace"] = {
+		label = "Diamond Necklace",
+		weight = 170,
+		stack = true,
+		close = false,
+		description = "An expensive diamond necklace. Extremely valuable.",
+		client = {
+			image = "vh_diamond_necklace.png",
+		}
+	},
+
+	["vh_silver_ring"] = {
+		label = "Silver Ring",
+		weight = 90,
+		stack = true,
+		close = false,
+		description = "A polished silver ring taken during the robbery.",
+		client = {
+			image = "vh_silver_ring.png",
+		}
+	},
+
+	["vh_gold_ring"] = {
+		label = "Gold Ring",
+		weight = 100,
+		stack = true,
+		close = false,
+		description = "A shiny gold ring stolen from a glass case.",
+		client = {
+			image = "vh_gold_ring.png",
+		}
+	},
+
+	["vh_diamond_watch"] = {
+		label = "Diamond Watch",
+		weight = 280,
+		stack = true,
+		close = false,
+		description = "An iced-out diamond watch. Extremely valuable.",
+		client = {
+			image = "vh_diamond_watch.png",
+		}
+	},
+
+	["vh_platinum_bracelet"] = {
+		label = "Platinum Bracelet",
+		weight = 220,
+		stack = true,
+		close = false,
+		description = "A rare platinum bracelet stolen during the heist.",
+		client = {
+			image = "vh_platinum_bracelet.png",
+		}
+	},
+
+	["vh_gold_watch"] = {
+		label = "Gold Watch",
+		weight = 300,
+		stack = true,
+		close = false,
+		description = "A heavy gold watch taken from the showroom.",
+		client = {
+			image = "vh_gold_watch.png",
+		}
+	},
+
+	["vh_luxury_watch"] = {
+		label = "Luxury Watch",
+		weight = 250,
+		stack = true,
+		close = false,
+		description = "A premium luxury watch worth a lot on the black market.",
+		client = {
+			image = "vh_luxury_watch.png",
+		}
+	},
+
+	["vh_diamond_ring"] = {
+		label = "Diamond Ring",
+		weight = 85,
+		stack = true,
+		close = false,
+		description = "A high-value diamond engagement ring.",
+		client = {
+			image = "vh_diamond_ring.png",
+		}
+	},
+
+	["vh_silver_necklace"] = {
+		label = "Silver Necklace",
+		weight = 180,
+		stack = true,
+		close = false,
+		description = "A fine silver necklace taken from the store.",
+		client = {
+			image = "vh_silver_necklace.png",
+		}
+	},
+
+	["fuse_box"] = {
+		label = "Fuse Pack",
+		weight = 220,
+		stack = true,
+		close = false,
+		description = "Pack of 4 Fuses",
+		client = {
+			image = "fuse_box.png",
+		}
+	},
+	
+	
+	-- add this if you don't have it
+	
+	
+	["screwdriverset"] = {
+		label = "Toolkit",
+		weight = 1000,
+		stack = true,
+		close = false,
+		description = "Very useful to screw... screws...",
+		client = {
+			image = "screwdriverset.png",
+		}
+	},
 ['cilantro'] = {
     label = 'Cilantro',
     weight = 30,
