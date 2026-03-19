@@ -3533,6 +3533,22 @@ return {
 			image = "fuse_box.png",
 		}
 	},
+['hydraulic_part'] = {
+    label = 'Hydraulic Part',
+    weight = 500,
+    stack = true,
+    close = true,
+    description = 'A hydraulic part salvaged from a vehicle',
+    image = 'hydraulic_part.png',
+},
+['duct_tape'] = {
+    label = 'Duct Tape',
+    weight = 200,
+    stack = true,
+    close = true,
+    description = 'A roll of duct tape',
+    image = 'duct_tape.png',
+},
 ['craftingtable'] = {
     label = 'Crafting Table',
     weight = 100,
