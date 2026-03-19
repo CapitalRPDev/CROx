@@ -3533,7 +3533,7 @@ return {
 			image = "fuse_box.png",
 		}
 	},
-	['craftingtable'] = {
+['craftingtable'] = {
     label = 'Crafting Table',
     weight = 100,
     stack = false,
@@ -3541,7 +3541,15 @@ return {
     description = 'Crafting Table',
     image = 'craftingtable.png',
 },
-	
+
+['blueprint'] = {
+    label = 'Blueprint',
+    weight = 100,
+    stack = false,
+    close = true,
+    description = 'Blueprint',
+    image = 'blueprint.png',
+},
 	-- add this if you don't have it
 	
 	
