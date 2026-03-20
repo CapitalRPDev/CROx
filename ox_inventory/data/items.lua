@@ -862,7 +862,16 @@ return {
     description = '',
     stack = true,
 },
-
+['kq_outfitbag'] = {
+    name = 'kq_outfitbag',
+    label = 'Outfit Bag',
+    weight = 4000,
+    type = 'item',
+    image = 'kq_outfitbag.png',
+    useable = true,
+    stack = true,
+    description = 'Holds different outfits',
+},
 	['evidence_bag'] = {
 		name = 'evidence_bag',
 		label = 'Evidence Bag',
