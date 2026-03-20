@@ -3520,7 +3520,174 @@ return {
 			image = "vh_diamond_ring.png",
 		}
 	},
+['nylonrope'] = {
+        label = 'Nylon Rope',
+        description = 'The strongest rope material..',
+        weight = 125,
+        close = true,
+        stack = true,
+        client = {
+      image = "nylonrope.png",
+   event = 'projectx-atmrobbery:client:UseRope',
+    }
+    },
 
+    ['atmred'] = {
+        label = 'Red ATM',
+        description = 'A console of an automated teller.',
+        weight = 350,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmred.png",
+   event = 'projectx-atmrobbery:client:UseAtm-Red',
+    }
+    },
+
+    ['atmblue'] = {
+        label = 'Blue ATM',
+        description = 'A console of an automated teller.',
+        weight = 350,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmblue.png",
+   event = 'projectx-atmrobbery:client:UseAtm-Blue',
+    }
+    },
+
+    ['atmgreen'] = {
+        label = 'Green ATM',
+        description = 'A console of an automated teller.',
+        weight = 350,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmgreen.png",
+   event = 'projectx-atmrobbery:client:UseAtm-Green',
+    }
+    },
+
+    ['atmpanel'] = {
+        label = 'ATM Panel',
+        description = 'A back panel from an automated teller.',
+        weight = 125,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmpanel.png",
+    }
+    },
+
+    ['atmcables'] = {
+        label = 'ATM Cables',
+        description = 'Cables from an automated teller.',
+        weight = 125,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmcables.png",
+    }
+    },
+
+    ['atmmotherboard'] = {
+        label = 'ATM Motherboard',
+        description = 'A motherboard from an automated teller.',
+        weight = 125,
+        close = true,
+        stack = false,
+        client = {
+      image = "atmmotherboard.png",
+    }
+    },
+
+    ['blowtorch'] = {
+        label = 'Blow Torch',
+        description = 'Ooo hot...',
+        weight = 125,
+        close = true,
+        stack = false,
+        client = {
+      image = "blowtorch.png",
+    }
+    },
+
+    ['laserdrill'] = {
+        label = 'Laser Drill',
+        description = 'I wonder what this does...',
+        weight = 125,
+        close = true,
+        stack = false,
+        client = {
+      image = "laserdrill.png",
+    }
+    },
+
+    ['screwdriverset'] = {
+        label = 'Screwdriverset',
+        description = 'A Screw driver set',
+        weight = 50,
+        close = true,
+        stack = false,
+        client = {
+      image = "screwdriverset.png",
+    }
+    },
+
+    ["x_gastank"] = {
+      label = "X Gas Tank",
+      weight = 200,
+      stack = true,
+      close = false,
+      description = "????",
+      client = {
+        image = "x_gastank.png",
+      }
+    },
+
+    ["x_fakecredit"] = {
+      label = "X Credit Card",
+      weight = 200,
+      stack = true,
+      close = false,
+      description = "????",
+      client = {
+        image = "x_fakecredit.png",
+      }
+    },
+    
+    ["x_device"] = {
+        label = "X Device",
+        weight = 50,
+        stack = false,
+        close = false,
+        description = "?????????",
+        client = {
+          image = "x_device.png",
+        }
+    },
+
+    ["thermite"] = {
+      label = "Thermite",
+      weight = 1000,
+      stack = true,
+      close = true,
+      description = "Sometimes you'd wish for everything to burn",
+      client = {
+        image = "thermite.png",
+      }
+    },
+
+    ["lighter"] = {
+      label = "Lighter",
+      weight = 0,
+      stack = true,
+      close = true,
+      description = "On new years eve a nice fire to stand next to",
+      client = {
+        image = "lighter.png",
+      }
+    },
 	["vh_silver_necklace"] = {
 		label = "Silver Necklace",
 		weight = 180,
