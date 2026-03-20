@@ -13,7 +13,10 @@ return {
 			durability = 0.03,
 			ammoname = 'WEAPON_SNOWBALL',
 		},
-
+		['WEAPON_KQPOWERWASHER'] = {
+			label = 'Pressure Washing gun',
+			weight = 1000,
+		},
 		['WEAPON_TECPISTOL'] = {
 			label = 'Tactical SMG',
 			weight = 1500,
