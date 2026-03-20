@@ -3533,6 +3533,40 @@ return {
 			image = "fuse_box.png",
 		}
 	},
+
+    ["bikerack"] = {
+        label = "Bike rack",
+        weight = 5000,
+        stack = true,
+        close = true,
+        consume = 0,
+        server = {
+            export = 'kq_roofboxes.UseRoofbox',
+        },
+    },
+
+    ["roofbox_color"] = {
+        label = "Roofbox - Colormatched",
+        weight = 5000,
+        stack = true,
+        close = true,
+        consume = 0,
+        server = {
+            export = 'kq_roofboxes.UseRoofbox',
+        },
+    },
+
+    ["roofbox_carbon"] = {
+        label = "Roofbox - Carbon",
+        weight = 5000,
+        stack = true,
+        close = true,
+        consume = 0,
+        server = {
+            export = 'kq_roofboxes.UseRoofbox',
+        },
+    },
+
 ['hydraulic_part'] = {
     label = 'Hydraulic Part',
     weight = 500,
