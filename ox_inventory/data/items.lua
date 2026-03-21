@@ -3465,6 +3465,16 @@ return {
 			image = "vh_gold_ring.png",
 		}
 	},
+    	["crane_controller"] = {
+		label = "Controller",
+		weight = 100,
+		stack = false,
+		close = false,
+		description = "Controller used to control things",
+		client = {
+			image = "crane_controller.png",
+		}
+	},
 
 	["vh_diamond_watch"] = {
 		label = "Diamond Watch",
