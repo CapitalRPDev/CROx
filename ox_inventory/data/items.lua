@@ -3472,6 +3472,7 @@ return {
 		close = false,
 		description = "Controller used to control things",
 		client = {
+            event = "CMaintenanceJob:Client:UseController",
 			image = "crane_controller.png",
 		}
 	},
