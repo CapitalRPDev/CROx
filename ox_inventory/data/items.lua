@@ -3666,6 +3666,52 @@ return {
           image = "x_device.png",
         }
     },
+    ["bands"] = {
+    label = "Band Of Notes",
+    weight = 100,
+    stack = true,
+    close = false,
+    description = "A band of small notes..",
+    consume = 0,
+    client = {
+        image = "bands.png",
+    }
+},
+
+["rolls"] = {
+    label = "Roll Of Small Notes",
+    weight = 100,
+    stack = true,
+    close = false,
+    description = "A roll of small notes..",
+    consume = 0,
+    client = {
+        image = "rolls.png",
+    }
+},
+
+["package"] = {
+    label = "Suspicious Package",
+    weight = 10000,
+    stack = false,
+    close = false,
+    description = "A mysterious package.. Scary!",
+    consume = 0,
+    client = {
+        image = "package.png",
+    }
+},
+["oxy"] = {
+    label = "Prescription Oxy",
+    weight = 0,
+    stack = true,
+    close = true,
+    description = "The Label Has Been Ripped Off",
+    consume = 0,
+    client = {
+        image = "oxy.png",
+    },
+},
 ['boostingtablet'] = {
     label = 'Boosting tablet',
     weight = 0,
